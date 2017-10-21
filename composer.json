@@ -1,0 +1,11 @@
+{
+  "autoload": {
+    "psr-4": {"RandomStringGenerator\\": "src/"}
+  },
+  "autoload-dev": {
+    "psr-4": {"RandomStringGenerator\\Test\\": "test/"}
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^6.2"
+  }
+}
