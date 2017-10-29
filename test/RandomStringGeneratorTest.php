@@ -57,12 +57,24 @@ class RandomStringGeneratorTest extends TestCase
         $this->assertRegExp('/[0-9]-/', $this->generator->generate($stringPattern));
     }
 
-  // test "accept utf8 delimiter" do
-  //   assert RandomStringGenerator.generate("ááàã") == "ááàã"
-  // end
+    public function testGenerateShouldAcceptAUtf8()
+    {
+        $stringPattern = 'ááàã';
 
-  // test "accept scape character" do
-  //   str = RandomStringGenerator.generate("\\d-")
-  //   assert Regex.match?(~r/d-/, str) == true
-  // end
+        $this->assertEquals($stringPattern, $this->generator->generate($stringPattern));
+    }
+
+    public function testGenerateShouldScapeCharacter()
+    {
+        $stringPattern = '\\d-';
+
+        $this->assertEquals('d-', $this->generator->generate($stringPattern));
+    }
+
+    public function testGenerateShouldGenerateComplexPatter()
+    {
+        $stringPattern = 'lLdp-\\d';
+
+        $this->assertRegExp('/[a-z][A-Z][0-9][\p{P}\p{S}]-d/', $this->generator->generate($stringPattern));
+    }
 }

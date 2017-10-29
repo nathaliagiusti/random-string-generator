@@ -11,10 +11,19 @@ class RandomStringGenerator
      */
     public function generate(string $stringPattern)
     {
-        $generatedString = '';
+        $generatedString  = '';
+        $isScapedCharacter = false;
 
         foreach (str_split($stringPattern) as $character)
         {
+            if ($isScapedCharacter)
+            {
+                $isScapedCharacter = false;
+                $generatedString .= $character;
+
+                continue;
+            }
+
             if ($character === 'l')
             {
                 $randomPos        = array_rand(SupportedCharacter::LOWER_ALPHA_CHARS, 1);
@@ -40,6 +49,13 @@ class RandomStringGenerator
             {
                 $randomPos        = array_rand(SupportedCharacter::PUNCTUATION, 1);
                 $generatedString .= SupportedCharacter::PUNCTUATION[$randomPos];
+                continue;
+            }
+
+            if ($character === '\\')
+            {
+                $isScapedCharacter = true;
+
                 continue;
             }
 
