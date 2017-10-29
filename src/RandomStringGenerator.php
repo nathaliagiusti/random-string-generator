@@ -5,7 +5,7 @@ namespace RandomStringGenerator;
 class RandomStringGenerator
 {
     /** @var array */
-    private static $stringPatters = [
+    private static $stringPatterns = [
         'l' => SupportedCharacter::LOWER_ALPHA_CHARS,
         'L' => SupportedCharacter::UPPER_ALPHA_CHARS,
         'd' => SupportedCharacter::DIGITS,
@@ -24,7 +24,7 @@ class RandomStringGenerator
 
         foreach (str_split($stringPattern) as $character) {
 
-            $character          = $this->getRandomCharacterByStringPattern($character, $scapeNextCharacter);
+            $character          = $scapeNextCharacter ? $character : $this->getCharacterByStringPattern($character);
             $scapeNextCharacter = $character == '';
 
             $generatedString .= $character;
@@ -35,23 +35,18 @@ class RandomStringGenerator
 
     /**
      * @param string $pattern
-     * @param bool   $shouldScapeCharacter
      *
      * @return string
      */
-    private function getRandomCharacterByStringPattern(string $pattern, bool $shouldScapeCharacter) : string
+    private function getCharacterByStringPattern(string $pattern) : string
     {
-        if ($shouldScapeCharacter) {
-            return $pattern;
-        }
-
         if ($pattern === '\\') {
             return '';
         }
 
-        if (array_key_exists($pattern, self::$stringPatters)) {
+        if (array_key_exists($pattern, self::$stringPatterns)) {
 
-            return $this->getRandomCharacterFromArray(self::$stringPatters[$pattern]);
+            return $this->getRandomCharacterFromArray(self::$stringPatterns[$pattern]);
         }
 
         return $pattern;
@@ -62,7 +57,7 @@ class RandomStringGenerator
      *
      * @return string
      */
-    private function getRandomCharacterFromArray(array $characters) :string
+    private function getRandomCharacterFromArray(array $characters) : string
     {
         $randomPos = array_rand($characters, 1);
 
