@@ -4,6 +4,14 @@ namespace RandomStringGenerator;
 
 class RandomStringGenerator
 {
+    /** @var array */
+    private static $stringPatters = [
+        'l' => SupportedCharacter::LOWER_ALPHA_CHARS,
+        'L' => SupportedCharacter::UPPER_ALPHA_CHARS,
+        'd' => SupportedCharacter::DIGITS,
+        'p' => SupportedCharacter::PUNCTUATION,
+    ];
+
     /**
      * @param string $stringPattern
      *
@@ -11,57 +19,57 @@ class RandomStringGenerator
      */
     public function generate(string $stringPattern)
     {
-        $generatedString  = '';
+        $generatedString   = '';
         $isScapedCharacter = false;
 
-        foreach (str_split($stringPattern) as $character)
-        {
-            if ($isScapedCharacter)
-            {
+        foreach (str_split($stringPattern) as $character) {
+
+            if ($isScapedCharacter) {
                 $isScapedCharacter = false;
-                $generatedString .= $character;
+                $generatedString  .= $character;
 
                 continue;
             }
 
-            if ($character === 'l')
-            {
-                $randomPos        = array_rand(SupportedCharacter::LOWER_ALPHA_CHARS, 1);
-                $generatedString .= SupportedCharacter::LOWER_ALPHA_CHARS[$randomPos];
-                continue;
-            }
-
-            if ($character === 'L')
-            {
-                $randomPos        = array_rand(SupportedCharacter::UPPER_ALPHA_CHARS, 1);
-                $generatedString .= SupportedCharacter::UPPER_ALPHA_CHARS[$randomPos];
-                continue;
-            }
-
-            if ($character === 'd')
-            {
-                $randomPos        = array_rand(SupportedCharacter::DIGITS, 1);
-                $generatedString .= SupportedCharacter::DIGITS[$randomPos];
-                continue;
-            }
-
-            if ($character === 'p')
-            {
-                $randomPos        = array_rand(SupportedCharacter::PUNCTUATION, 1);
-                $generatedString .= SupportedCharacter::PUNCTUATION[$randomPos];
-                continue;
-            }
-
-            if ($character === '\\')
-            {
+            if ($character === '\\') {
                 $isScapedCharacter = true;
 
                 continue;
             }
+
+            $character = $this->mapToPattern($character);
 
             $generatedString .= $character;
         }
 
         return $generatedString;
     }
+
+    /**
+     * @param string $character
+     *
+     * @return string
+     */
+    private function mapToPattern(string $character) {
+
+        if (array_key_exists($character, self::$stringPatters)) {
+
+            return $this->getRandomCharacterFromArray(self::$stringPatters[$character]);
+        }
+
+        return $character;
+    }
+
+    /**
+     * @param array $characters
+     *
+     * @return string
+     */
+    private function getRandomCharacterFromArray(array $characters) {
+
+        $randomPos = array_rand($characters, 1);
+
+        return $characters[$randomPos];
+    }
+
 }
