@@ -17,27 +17,15 @@ class RandomStringGenerator
      *
      * @return string
      */
-    public function generate(string $stringPattern)
+    public function generate(string $stringPattern) : string
     {
-        $generatedString   = '';
-        $isScapedCharacter = false;
+        $generatedString    = '';
+        $scapeNextCharacter = false;
 
         foreach (str_split($stringPattern) as $character) {
 
-            if ($isScapedCharacter) {
-                $isScapedCharacter = false;
-                $generatedString  .= $character;
-
-                continue;
-            }
-
-            if ($character === '\\') {
-                $isScapedCharacter = true;
-
-                continue;
-            }
-
-            $character = $this->mapToPattern($character);
+            $character          = $this->getRandomCharacterByStringPattern($character, $scapeNextCharacter);
+            $scapeNextCharacter = $character == '';
 
             $generatedString .= $character;
         }
@@ -46,18 +34,27 @@ class RandomStringGenerator
     }
 
     /**
-     * @param string $character
+     * @param string $pattern
+     * @param bool   $shouldScapeCharacter
      *
      * @return string
      */
-    private function mapToPattern(string $character) {
-
-        if (array_key_exists($character, self::$stringPatters)) {
-
-            return $this->getRandomCharacterFromArray(self::$stringPatters[$character]);
+    private function getRandomCharacterByStringPattern(string $pattern, bool $shouldScapeCharacter) : string
+    {
+        if ($shouldScapeCharacter) {
+            return $pattern;
         }
 
-        return $character;
+        if ($pattern === '\\') {
+            return '';
+        }
+
+        if (array_key_exists($pattern, self::$stringPatters)) {
+
+            return $this->getRandomCharacterFromArray(self::$stringPatters[$pattern]);
+        }
+
+        return $pattern;
     }
 
     /**
@@ -65,8 +62,8 @@ class RandomStringGenerator
      *
      * @return string
      */
-    private function getRandomCharacterFromArray(array $characters) {
-
+    private function getRandomCharacterFromArray(array $characters) :string
+    {
         $randomPos = array_rand($characters, 1);
 
         return $characters[$randomPos];
